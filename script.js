@@ -1,5 +1,5 @@
 // Make functions globally accessible for HTML onclick attributes
-let switchPage, openTab, copyToClipboard, hideOverlay;
+let switchPage, openTab, copyToClipboard, hideOverlay, payBill;
 
 document.addEventListener('DOMContentLoaded', () => {
     const appContainer = document.getElementById('app-container');
@@ -15,7 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
             address: 'AV DOMINGO DIEZ NO 1604 COL MARAVILLAS, 62230, CUERNAVACA, MOR., MORELOS',
         },
         balance: 150000.00,
-        accountOpeningDate: '15/11/2025'
+        accountOpeningDate: '15/11/2025',
+        pendingBills: [
+            {
+                id: 'megacable-1',
+                service: 'Megacable - Internet',
+                subscriberNumber: '4740022536',
+                package: 'Doble Pack Internet 100 Megas + Telefonía Fija',
+                dueDate: '06 de enero',
+                amount: 480.00
+            }
+        ],
+        transactions: []
     };
 
     // --- Global Functions ---
@@ -127,6 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set initial page
         switchPage('home');
 
+        // Render dynamic content
+        renderPendingBills();
+        createPaymentConfirmationPages();
+        renderTransactions();
+
         // --- Event Listeners for Quick Actions ---
 
         // Transfer Form Logic
@@ -157,6 +173,109 @@ document.addEventListener('DOMContentLoaded', () => {
                 <small>Este código es válido por 10 minutos.</small>
             `;
             withdrawalCodeDiv.classList.remove('hidden');
+        });
+    }
+
+    function renderPendingBills() {
+        const pendingBillsContainer = document.getElementById('pending-bills');
+        pendingBillsContainer.innerHTML = '<h3>Recibos Pendientes</h3>'; // Reset
+
+        userData.pendingBills.forEach(bill => {
+            const billCard = document.createElement('div');
+            billCard.className = 'bill-card overdue';
+            billCard.onclick = () => switchPage(`pay-confirm-${bill.id}`);
+
+            billCard.innerHTML = `
+                <div class="bill-card-header">
+                    <h4>${bill.service}</h4>
+                    <span class="overdue-tag">VENCIDO</span>
+                </div>
+                <div class="bill-card-body">
+                    <p><strong>Monto:</strong> $${bill.amount.toFixed(2)}</p>
+                    <p><strong>Fecha Límite:</strong> ${bill.dueDate}</p>
+                </div>
+            `;
+            pendingBillsContainer.appendChild(billCard);
+        });
+    }
+
+    function createPaymentConfirmationPages() {
+        const container = document.getElementById('pay-confirm-container');
+        userData.pendingBills.forEach(bill => {
+            const page = document.createElement('div');
+            page.id = `pay-confirm-${bill.id}`;
+            page.className = 'page hidden';
+
+            page.innerHTML = `
+                <header class="page-header">
+                    <button class="back-btn" onclick="switchPage('pay')"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Confirmar Pago</h2>
+                </header>
+                <div class="confirmation-details">
+                    <h3>${bill.service}</h3>
+                    <p><strong>Número de Suscriptor:</strong> ${bill.subscriberNumber}</p>
+                    <p><strong>Paquete:</strong> ${bill.package}</p>
+                    <p><strong>Fecha Límite de Pago:</strong> ${bill.dueDate}</p>
+                    <div class="confirmation-amount">
+                        <p>Total a Pagar:</p>
+                        <span>$${bill.amount.toFixed(2)}</span>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="payBill('${bill.id}')">Pagar Ahora</button>
+            `;
+            container.appendChild(page);
+        });
+    }
+
+    payBill = (billId) => {
+        const billIndex = userData.pendingBills.findIndex(b => b.id === billId);
+        if (billIndex > -1) {
+            const bill = userData.pendingBills[billIndex];
+
+            // Add to transaction history
+            userData.transactions.unshift({
+                date: new Date().toLocaleDateString('es-ES'),
+                description: `Pago de servicio: ${bill.service}`,
+                amount: -bill.amount
+            });
+
+            // "Pay" the bill by removing it from pending
+            userData.pendingBills.splice(billIndex, 1);
+
+            // Re-render related content
+            renderPendingBills();
+            renderTransactions(); // Update transaction history
+            createPaymentConfirmationPages(); // Re-create pages in case of changes
+
+            showOverlay();
+        } else {
+            alert('Error: No se encontró el recibo.');
+        }
+    };
+
+    function renderTransactions() {
+        const movementsTab = document.getElementById('movements');
+        movementsTab.innerHTML = ''; // Clear existing content
+
+        if (userData.transactions.length === 0) {
+            movementsTab.innerHTML = '<p>No hay movimientos recientes.</p>';
+            return;
+        }
+
+        userData.transactions.forEach(tx => {
+            const txElement = document.createElement('div');
+            txElement.className = 'transaction-item';
+
+            const amountClass = tx.amount < 0 ? 'expense' : 'income';
+
+            txElement.innerHTML = `
+                <div class="transaction-details">
+                    <p class="transaction-description">${tx.description}</p>
+                    <p class="transaction-date">${tx.date}</p>
+                </div>
+                <p class="transaction-amount ${amountClass}">$${tx.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            `;
+            movementsTab.appendChild(txElement);
         });
     }
 

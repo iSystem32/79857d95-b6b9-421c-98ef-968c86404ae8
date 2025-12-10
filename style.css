@@ -424,3 +424,152 @@ body {
     color: #28a745;
     margin-bottom: 1rem;
 }
+
+/* --- New Styles for Bill Pay and History --- */
+
+/* Pending Bills */
+.pending-bills-section {
+    margin-bottom: 2rem;
+}
+.pending-bills-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+.bill-card {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    border-left: 5px solid transparent;
+}
+.bill-card.overdue {
+    border-left-color: #d90429;
+    background-color: #fef1f1;
+}
+.bill-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.bill-card-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.overdue-tag {
+    background-color: #d90429;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-weight: 700;
+}
+.bill-card-body p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Updated Service List */
+.service-category h4 {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.service-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.service-item i {
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+    color: #d90429;
+}
+
+/* Confirmation Page */
+.confirmation-details {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.confirmation-details h3 {
+    margin-top: 0;
+}
+.confirmation-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+.confirmation-amount span {
+    color: #d90429;
+}
+
+/* Transaction History */
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+.transaction-description {
+    font-weight: 600;
+    margin: 0;
+}
+.transaction-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
+}
+.transaction-amount.expense {
+    color: #d90429;
+    font-weight: 600;
+}
+.transaction-amount.income {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Settings Menu */
+.settings-menu {
+    display: flex;
+    flex-direction: column;
+}
+.settings-section h4 {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    margin: 1.5rem 0 0.5rem 0;
+}
+.settings-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+}
+.settings-item i {
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+    color: #555;
+}
