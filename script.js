@@ -150,15 +150,30 @@ document.addEventListener('DOMContentLoaded', () => {
         transferForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const destAccount = document.getElementById('dest-account').value;
-            const transferAmount = document.getElementById('transfer-amount').value;
+            const transferAmount = parseFloat(document.getElementById('transfer-amount').value);
 
-            if (destAccount && transferAmount) {
-                // In a real app, you'd process the transfer here
-                console.log(`Transfering ${transferAmount} to ${destAccount}`);
+            if (destAccount && transferAmount > 0) {
+                // Add to transaction history
+                userData.transactions.unshift({
+                    date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }),
+                    description: `Transferencia a cuenta ${destAccount.slice(-4)}`,
+                    amount: -transferAmount
+                });
+
+                // Update balance
+                userData.balance -= transferAmount;
+
+                // Re-render transactions and update balance display
+                renderTransactions();
+                const balanceEl = document.getElementById('balance-amount');
+                if (!balanceEl.textContent.includes('*')) {
+                    balanceEl.textContent = `$${userData.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+
                 showOverlay();
                 transferForm.reset(); // Clear the form
             } else {
-                alert('Por favor, completa todos los campos.');
+                alert('Por favor, ingresa un monto válido.');
             }
         });
 
@@ -173,6 +188,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 <small>Este código es válido por 10 minutos.</small>
             `;
             withdrawalCodeDiv.classList.remove('hidden');
+        });
+
+        // Telcel Recharge Form Logic
+        const telcelRechargeForm = document.getElementById('telcel-recharge-form');
+        telcelRechargeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const telcelAmount = parseFloat(document.getElementById('telcel-amount').value);
+
+            if (telcelAmount > 0) {
+                // Add to transaction history
+                userData.transactions.unshift({
+                    date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }),
+                    description: 'Recarga Telcel',
+                    amount: -telcelAmount
+                });
+
+                // Update balance
+                userData.balance -= telcelAmount;
+
+                // Re-render transactions and update balance display
+                renderTransactions();
+                const balanceEl = document.getElementById('balance-amount');
+                if (!balanceEl.textContent.includes('*')) {
+                    balanceEl.textContent = `$${userData.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+
+                showOverlay();
+                telcelRechargeForm.reset(); // Clear the form
+            } else {
+                alert('Por favor, ingresa un monto válido.');
+            }
         });
     }
 
@@ -254,14 +300,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function renderTransactions() {
-        const movementsTab = document.getElementById('movements');
-        movementsTab.innerHTML = ''; // Clear existing content
+        const movementsPreview = document.getElementById('movements-preview');
+        const movementsList = document.getElementById('movements-list');
+
+        // Clear existing content
+        movementsPreview.innerHTML = '';
+        movementsList.innerHTML = '';
 
         if (userData.transactions.length === 0) {
-            movementsTab.innerHTML = '<p>No hay movimientos recientes.</p>';
+            const noMovementsMsg = '<p>No hay movimientos recientes.</p>';
+            movementsPreview.innerHTML = noMovementsMsg;
+            movementsList.innerHTML = noMovementsMsg;
             return;
         }
 
+        // Populate both the preview and the full list
         userData.transactions.forEach(tx => {
             const txElement = document.createElement('div');
             txElement.className = 'transaction-item';
@@ -275,7 +328,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <p class="transaction-amount ${amountClass}">$${tx.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
             `;
-            movementsTab.appendChild(txElement);
+
+            // The preview only shows the most recent transactions, the list shows all
+            if (movementsPreview.children.length < 5) {
+                movementsPreview.appendChild(txElement.cloneNode(true));
+            }
+            movementsList.appendChild(txElement);
         });
     }
 
