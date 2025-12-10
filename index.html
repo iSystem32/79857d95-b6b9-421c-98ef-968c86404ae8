@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Main Dashboard Page -->
+        <div id="home" class="page">
+            <header class="header">
+                <div class="profile-pic">
+                    <img src="assets/profile-placeholder.png" alt="Profile Picture">
+                </div>
+                <div class="welcome-message">
+                    <h2>Hola, Harold Alonso H.</h2>
+                </div>
+                <div class="header-icons">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <section class="balance-section">
+                    <div class="balance-header">
+                        <h3>Saldo Total</h3>
+                        <button id="toggle-balance" class="toggle-balance-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <p id="balance-amount" class="balance-amount">$150,000.00</p>
+                </section>
+
+                <section class="quick-actions">
+                    <button class="action-btn" onclick="switchPage('transfer')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transferir</span>
+                    </button>
+                    <button class="action-btn" onclick="switchPage('pay')">
+                        <i class="fas fa-wallet"></i>
+                        <span>Pagar</span>
+                    </button>
+                    <button class="action-btn" onclick="switchPage('withdraw')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Retiro</span>
+                    </button>
+                    <button class="action-btn" onclick="switchPage('more')">
+                        <i class="fas fa-ellipsis-h"></i>
+                        <span>Más</span>
+                    </button>
+                </section>
+
+                <section class="virtual-card">
+                    <div class="card-header">
+                        <h4>Tarjeta Digital</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-chip"></div>
+                        <p class="card-number">**** **** **** 1234</p>
+                        <div class="card-footer">
+                            <p class="card-holder">HAROLD A HERNANDEZ</p>
+                            <p class="card-expiry">12/28</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="account-details-tabs">
+                    <div class="tab-nav">
+                        <button class="tab-link active" onclick="openTab(event, 'movements')">Movimientos</button>
+                        <button class="tab-link" onclick="openTab(event, 'card-info')">Mi Tarjeta</button>
+                        <button class="tab-link" onclick="openTab(event, 'details')">Detalles</button>
+                    </div>
+
+                    <div id="movements" class="tab-content" style="display: block;">
+                        <p>No hay movimientos recientes.</p>
+                    </div>
+                    <div id="card-info" class="tab-content">
+                        <p>Información de la tarjeta no disponible.</p>
+                    </div>
+                    <div id="details" class="tab-content">
+                        <!-- Account Details Here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Other Pages (Transfer, Pay, etc.) -->
+        <div id="transfer" class="page hidden">
+            <header class="page-header">
+                <button class="back-btn" onclick="switchPage('home')"><i class="fas fa-arrow-left"></i></button>
+                <h2>Transferir</h2>
+            </header>
+            <form id="transfer-form" class="form-layout">
+                <input type="text" id="dest-account" placeholder="Cuenta de destino" class="form-input">
+                <input type="number" id="transfer-amount" placeholder="Monto" class="form-input">
+                <button type="submit" class="btn-primary">Transferir</button>
+            </form>
+        </div>
+
+        <div id="pay" class="page hidden">
+            <header class="page-header">
+                <button class="back-btn" onclick="switchPage('home')"><i class="fas fa-arrow-left"></i></button>
+                <h2>Pagar Servicio</h2>
+            </header>
+            <div class="service-list">
+                <button class="service-item">Agua</button>
+                <button class="service-item">Luz</button>
+                <button class="service-item">Internet</button>
+                 <button class="service-item">Telefonía</button>
+            </div>
+        </div>
+
+        <div id="withdraw" class="page hidden">
+            <header class="page-header">
+                <button class="back-btn" onclick="switchPage('home')"><i class="fas fa-arrow-left"></i></button>
+                <h2>Retiro sin Tarjeta</h2>
+            </header>
+            <div class="withdraw-options">
+                <p>Selecciona un monto:</p>
+                <button class="amount-option">$500</button>
+                <button class="amount-option">$1000</button>
+                <button class="amount-option">$2000</button>
+                <button class="amount-option">$5000</button>
+            </div>
+            <button id="generate-code-btn" class="btn-primary">Generar Código</button>
+            <div id="withdrawal-code" class="withdrawal-code hidden"></div>
+        </div>
+
+        <div id="more" class="page hidden">
+            <header class="page-header">
+                <button class="back-btn" onclick="switchPage('home')"><i class="fas fa-arrow-left"></i></button>
+                <h2>Más Opciones</h2>
+            </header>
+            <div class="more-grid">
+                <div class="grid-item"><i class="fas fa-chart-line"></i><span>Inversiones</span></div>
+                <div class="grid-item"><i class="fas fa-credit-card"></i><span>Créditos</span></div>
+                <div class="grid-item"><i class="fas fa-shield-alt"></i><span>Seguros</span></div>
+                <div class="grid-item"><i class="fas fa-file-invoice-dollar"></i><span>Aclaraciones</span></div>
+                <div class="grid-item"><i class="fas fa-cog"></i><span>Ajustes</span></div>
+                <div class="grid-item"><i class="fas fa-question-circle"></i><span>Ayuda</span></div>
+            </div>
+        </div>
+
+        <!-- Success Overlay -->
+        <div id="success-overlay" class="overlay hidden">
+            <div class="overlay-content">
+                <i class="fas fa-check-circle"></i>
+                <h2>¡Éxito!</h2>
+                <p>Tu operación fue realizada correctamente.</p>
+                <button onclick="hideOverlay()" class="btn-primary">Aceptar</button>
+            </div>
+        </div>
+
+
+        <!-- Responsive Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchPage('home')"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="nav-btn" onclick="switchPage('transfer')"><i class="fas fa-exchange-alt"></i><span>Transfer</span></button>
+            <button class="nav-btn" onclick="switchPage('pay')"><i class="fas fa-wallet"></i><span>Wallet</span></button>
+            <button class="nav-btn" onclick="switchPage('more')"><i class="fas fa-bars"></i><span>Menu</span></button>
+        </nav>
+
+        <nav class="sidebar">
+             <div class="sidebar-header">
+                <h3>Santander</h3>
+            </div>
+            <button class="nav-btn active" onclick="switchPage('home')"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="nav-btn" onclick="switchPage('transfer')"><i class="fas fa-exchange-alt"></i><span>Transfer</span></button>
+            <button class="nav-btn" onclick="switchPage('pay')"><i class="fas fa-wallet"></i><span>Wallet</span></button>
+            <button class="nav-btn" onclick="switchPage('more')"><i class="fas fa-bars"></i><span>Menu</span></button>
+        </nav>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
